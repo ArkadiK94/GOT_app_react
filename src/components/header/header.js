@@ -28,21 +28,21 @@ const HeaderLinks = styled.ul`
 
 const Header = () => {
     return (
-        <HeaderBlock>
+        <HeaderBlock id="d">
             <HeaderTitle>
-                <a href="#">
+                <a href="#d">
                 Game of Thrones DB
                 </a>
             </HeaderTitle>
             <HeaderLinks>
                 <li>
-                    <a href="#">Characters</a>
+                    <a href="#d">Characters</a>
                 </li>
                 <li>
-                    <a href="#">Houses</a>
+                    <a href="#d">Houses</a>
                 </li>
                 <li>
-                    <a href="#">Books</a>   
+                    <a href="#d">Books</a>   
                 </li>
             </HeaderLinks>
         </HeaderBlock>

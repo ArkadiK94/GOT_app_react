@@ -4,13 +4,10 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
-import GetGotInfo from '../../services'
+// import GetGotInfo from '../../services'
 
 
 const App = () => {
-    const newGet = new GetGotInfo();
-    newGet.getAllCharacters()
-    .then(res=>console.log(res));
     return (
         <> 
             <Container>
