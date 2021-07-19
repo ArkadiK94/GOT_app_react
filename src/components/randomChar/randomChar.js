@@ -1,10 +1,12 @@
 import React, {Component} from 'react';
-import {ListGroup,ListGroupItem} from 'reactstrap';
+import {ListGroup,ListGroupItem,Button} from 'reactstrap';
 import styled from 'styled-components';
 import GetGotInfo from '../../services';
 import Loading from '../loading';
+import Error from '../error';
 
 const RandomBlock = styled.div`
+    min-height: 300px
     background-color: #fff;
     padding: 25px 25px 15px 25px;
     margin-bottom: 40px;
@@ -18,13 +20,15 @@ const Term = styled.span`
 `;
 
 export default class RandomChar extends Component {
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.getRendomChar();
     }
     state = {
         char: {},
-        loading : true
+        loading : true,
+        error : false,
+        showNow : true
     }
     getRendomChar = ()=>{
         const newId = Math.floor(Math.random() *500 +25);
@@ -35,19 +39,35 @@ export default class RandomChar extends Component {
                 char: newChar,
                 loading: false
             });
+        })
+        .catch(() => {
+            this.setState({
+                error: true,
+                loading: false
+            });
         });
     };
+    setShowNow = ()=>{
+        const {show} = this.props;
+        this.setState({showNow:show})
+        this.props.onToggle(show);
+    }
     render() {
-        const {char,loading} = this.state;
-        // if(loading){
-        //     return(
-                
-        //     )
-        // }
+        const {char,loading,error,showNow} = this.state;
+        const load = loading ? <Loading/>: '';
+        const err = error && showNow ? <Error/>: '';
+        const view = (!(loading || error) && showNow)? <View char={char}/>: "";
         return (
-            <RandomBlock className="rounded">
-                <Loading/>
-            </RandomBlock>
+            <>
+                <div className="rounded">
+                    {load}
+                    {err}
+                    {view}
+                </div>
+                <Button 
+                    color="primary mb-5"
+                    onClick={this.setShowNow}>Toggle Random</Button>
+            </>
         );
     }
 }
@@ -55,7 +75,7 @@ export default class RandomChar extends Component {
 const View = ({char})=>{
     const {name,gender,born,died,culture} = char;
     return(
-        <div>
+        <RandomBlock className="rounded">
             <h4>Random Character: {name || "no-data :("}</h4>
             <ListGroup flush>
                 <ListGroupItem className="d-flex justify-content-between">
@@ -75,6 +95,6 @@ const View = ({char})=>{
                     <span>{culture  || "no-data :("}</span>
                 </ListGroupItem>
             </ListGroup>
-        </div>
+        </RandomBlock>
     )
 }
