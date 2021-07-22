@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import {Col, Row, Container} from 'reactstrap';
+import {Col, Row, Container, Button} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
@@ -8,14 +8,16 @@ import CharDetails from '../charDetails';
 
 export default class App extends Component{
     state = {
-        show: false
+        show: true
     }
-    onToggle = (showNow)=>{
-        this.setState({show:!showNow})
+    onToggle = ()=>{
+        const {show} = this.state;
+        this.setState({show:!show});
     }
 
     render(){
         const {show} = this.state;
+        const showNow = show ? <RandomChar/>: "";
         return (
             <> 
                 <Container>
@@ -24,7 +26,12 @@ export default class App extends Component{
                 <Container>
                     <Row>
                         <Col lg={{size: 5, offset: 0}}>
-                            <RandomChar onToggle={this.onToggle} show={show}/>
+                            {showNow}
+                            <Button 
+                                color="primary mb-5"
+                                onClick={this.onToggle}>
+                                    Toggle Random
+                            </Button>
                         </Col>
                     </Row>
                     <Row>

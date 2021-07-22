@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ListGroup,ListGroupItem,Button} from 'reactstrap';
+import {ListGroup,ListGroupItem} from 'reactstrap';
 import styled from 'styled-components';
 import GetGotInfo from '../../services';
 import Loading from '../loading';
@@ -27,12 +27,12 @@ export default class RandomChar extends Component {
     state = {
         char: {},
         loading : true,
-        error : false,
-        showNow : true
+        error : false
     }
     getRendomChar = ()=>{
         const newId = Math.floor(Math.random() *500 +25);
         const newService = new GetGotInfo();
+        console.log(newService.getCharacter(newId));
         newService.getCharacter(newId)
         .then(newChar=>{
             this.setState({
@@ -47,16 +47,11 @@ export default class RandomChar extends Component {
             });
         });
     };
-    setShowNow = ()=>{
-        const {show} = this.props;
-        this.setState({showNow:show})
-        this.props.onToggle(show);
-    }
     render() {
-        const {char,loading,error,showNow} = this.state;
+        const {char,loading,error} = this.state;
         const load = loading ? <Loading/>: '';
-        const err = error && showNow ? <Error/>: '';
-        const view = (!(loading || error) && showNow)? <View char={char}/>: "";
+        const err = error? <Error/>: '';
+        const view = (!(loading || error))? <View char={char}/>: "";
         return (
             <>
                 <div className="rounded">
@@ -64,9 +59,6 @@ export default class RandomChar extends Component {
                     {err}
                     {view}
                 </div>
-                <Button 
-                    color="primary mb-5"
-                    onClick={this.setShowNow}>Toggle Random</Button>
             </>
         );
     }
@@ -76,23 +68,23 @@ const View = ({char})=>{
     const {name,gender,born,died,culture} = char;
     return(
         <RandomBlock className="rounded">
-            <h4>Random Character: {name || "no-data :("}</h4>
+            <h4>Random Character: {name}</h4>
             <ListGroup flush>
                 <ListGroupItem className="d-flex justify-content-between">
                     <Term>Gender </Term>
-                    <span>{gender  || "no-data :("}</span>
+                    <span>{gender}</span>
                 </ListGroupItem>
                 <ListGroupItem className="d-flex justify-content-between">
                     <Term>Born </Term>
-                    <span>{born  || "no-data :("}</span>
+                    <span>{born}</span>
                 </ListGroupItem>
                 <ListGroupItem className="d-flex justify-content-between">
                     <Term>Died </Term>
-                    <span>{died  || "no-data :("}</span>
+                    <span>{died}</span>
                 </ListGroupItem>
                 <ListGroupItem className="d-flex justify-content-between">
                     <Term>Culture </Term>
-                    <span>{culture  || "no-data :("}</span>
+                    <span>{culture}</span>
                 </ListGroupItem>
             </ListGroup>
         </RandomBlock>

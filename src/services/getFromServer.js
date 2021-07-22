@@ -10,7 +10,12 @@ export default class GetGotInfo{
         return await res.json();
     }
     getAllCharacters(){
-        return this.getGotData(`/characters/?page=6&pageSize=10`);
+        return this.getGotData(`/characters/?page=6&pageSize=10`)
+        .then(res=>{
+            return res.map((item)=>{
+                return this.changeData(item,"characters");
+            });
+        });
     }
     getCharacter(id){
         return this.getGotData(`/characters/${id}`)
@@ -19,7 +24,12 @@ export default class GetGotInfo{
         });
     }
     getAllBooks(){
-        return this.getGotData(`/books/`);
+        return this.getGotData(`/books/`)
+        .then(res=>{
+            return res.map((item)=>{
+                return this.changeData(item,"books");
+            });
+        });
     }
     getBook(id){
         return this.getGotData(`/books/${id}`)
@@ -28,7 +38,12 @@ export default class GetGotInfo{
         });
     }
     getAllHouses(){
-        return this.getGotData(`/houses/`);
+        return this.getGotData(`/houses/`)
+        .then(res=>{
+            return res.map((item)=>{
+                return this.changeData(item,"houses");
+            });
+        });
     }
     getHouse(id){
         return this.getGotData(`/houses/${id}`)
@@ -36,15 +51,22 @@ export default class GetGotInfo{
             return this.changeData(res,"houses");
         });
     }
+    isValid(info){
+        if(info){
+            return info;
+        } else{
+            return "no data :(";
+        }
+    }
     changeData(data,type){
         if(type==="character"){
             const {name,gender,born,died,culture} = data;
             return {
-                name,
-                gender,
-                born,
-                died,
-                culture
+                name : this.isValid(name),
+                gender : this.isValid(gender),
+                born : this.isValid(born),
+                died : this.isValid(died),
+                culture : this.isValid(culture)
             }
         }
         if(type==="houses"){
