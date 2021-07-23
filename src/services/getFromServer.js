@@ -10,46 +10,46 @@ export default class GetGotInfo{
         return await res.json();
     }
     getAllCharacters(){
-        return this.getGotData(`/characters/?page=6&pageSize=10`)
-        .then(res=>{
-            return res.map((item)=>{
-                return this.changeData(item,"characters");
+        return this.getGotData(`/characters/?page=50&pageSize=10`)
+            .then(res=>{
+                return res.map((item)=>{
+                    return this.changeData(item,"character");
+                });
             });
-        });
     }
     getCharacter(id){
         return this.getGotData(`/characters/${id}`)
-        .then(res=>{
-            return this.changeData(res,"character");
-        });
+            .then(res=>{
+                return this.changeData(res,"character");
+            });
     }
     getAllBooks(){
         return this.getGotData(`/books/`)
-        .then(res=>{
-            return res.map((item)=>{
-                return this.changeData(item,"books");
+            .then(res=>{
+                return res.map((item)=>{
+                    return this.changeData(item,"books");
+                });
             });
-        });
     }
     getBook(id){
         return this.getGotData(`/books/${id}`)
-        .then(res=>{
-            return this.changeData(res,"books");
-        });
+            .then(res=>{
+                return this.changeData(res,"books");
+            });
     }
     getAllHouses(){
         return this.getGotData(`/houses/`)
-        .then(res=>{
-            return res.map((item)=>{
-                return this.changeData(item,"houses");
+            .then(res=>{
+                return res.map((item)=>{
+                    return this.changeData(item,"houses");
+                });
             });
-        });
     }
     getHouse(id){
         return this.getGotData(`/houses/${id}`)
-        .then(res=>{
-            return this.changeData(res,"houses");
-        });
+            .then(res=>{
+                return this.changeData(res,"houses");
+            });
     }
     isValid(info){
         if(info){
@@ -58,35 +58,43 @@ export default class GetGotInfo{
             return "no data :(";
         }
     }
+    excractId (url){
+        let id = url.match(/\d/g);
+        id = id.join("");
+        return id;
+    }
     changeData(data,type){
         if(type==="character"){
-            const {name,gender,born,died,culture} = data;
+            const {url,name,gender,born,died,culture} = data;
             return {
+                id : this.excractId(url),
                 name : this.isValid(name),
                 gender : this.isValid(gender),
                 born : this.isValid(born),
                 died : this.isValid(died),
-                culture : this.isValid(culture)
+                culture : this.isValid(culture),
             }
         }
         if(type==="houses"){
-            const {name,region,words,titles,seats} = data;
+            const {url,name,region,words,titles,seats} = data;
             return {
-                name,
-                region,
-                words,
-                titles,
-                seats
+                id : this.excractId(url),
+                name: this.isValid(name),
+                region: this.isValid(region),
+                words: this.isValid(words),
+                titles: this.isValid(titles),
+                seats: this.isValid(seats)
             }
         }
         if(type==="books"){
-            const {name,authors,publiser,country,released} = data;
+            const {url,name,authors,publiser,country,released} = data;
             return {
-                name,
-                authors,
-                publiser,
-                country,
-                released
+                id : this.excractId(url),
+                name: this.isValid(name),
+                authors: this.isValid(authors),
+                publiser: this.isValid(publiser),
+                country: this.isValid(country),
+                released: this.isValid(released)
             }
         }
     }

@@ -2,21 +2,28 @@ import React,{Component} from 'react';
 import {Col, Row, Container, Button} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
-import ItemList from '../itemList';
-import CharDetails from '../charDetails';
-// import GetGotInfo from '../../services'
+import Error from '../error';
+import CharPage from '../CharPage';
 
 export default class App extends Component{
     state = {
-        show: true
+        show: true,
+        error: false
     }
     onToggle = ()=>{
         const {show} = this.state;
         this.setState({show:!show});
     }
-
+    componentDidCatch(){
+        this.setState({error:true});
+    }
     render(){
-        const {show} = this.state;
+        const {error,show} = this.state;
+        if(error){
+            return(
+                <Error/>
+            )
+        }
         const showNow = show ? <RandomChar/>: "";
         return (
             <> 
@@ -34,14 +41,7 @@ export default class App extends Component{
                             </Button>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col md='6'>
-                            <ItemList />
-                        </Col>
-                        <Col md='6'>
-                            <CharDetails />
-                        </Col>
-                    </Row>
+                    <CharPage/>
                 </Container>
             </>
         );

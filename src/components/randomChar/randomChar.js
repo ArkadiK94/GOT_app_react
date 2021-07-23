@@ -20,33 +20,48 @@ const Term = styled.span`
 `;
 
 export default class RandomChar extends Component {
-    constructor(props){
-        super(props);
-        this.getRendomChar();
-    }
     state = {
         char: {},
         loading : true,
-        error : false
+        error : false,
+        interval : null
     }
+
+    getChar = new GetGotInfo();
+
     getRendomChar = ()=>{
         const newId = Math.floor(Math.random() *500 +25);
-        const newService = new GetGotInfo();
-        console.log(newService.getCharacter(newId));
-        newService.getCharacter(newId)
-        .then(newChar=>{
-            this.setState({
-                char: newChar,
-                loading: false
+        this.getChar.getCharacter(newId)
+            .then(newChar=>{
+                this.setState({
+                    char: newChar,
+                    loading: false
+                });
+            })
+            .catch(() => {
+                this.setState({
+                    error: true,
+                    loading: false
+                });
             });
+    }
+    componentDidMount(){
+        this.getRendomChar();
+        const intervalOn = setInterval(this.getRendomChar,1500);
+        this.setState(()=>{
+            return {
+                interval : intervalOn
+            }
         })
-        .catch(() => {
-            this.setState({
-                error: true,
-                loading: false
-            });
-        });
-    };
+    }
+    componentWillUnmount(){
+        clearInterval(this.state.interval);
+    }
+
+    componentDidCatch(){
+        console.log("reandomChar");
+    }
+
     render() {
         const {char,loading,error} = this.state;
         const load = loading ? <Loading/>: '';
