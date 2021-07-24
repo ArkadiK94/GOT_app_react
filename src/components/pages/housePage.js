@@ -1,14 +1,18 @@
 import React,{Component} from 'react';
-import ItemList from '../../itemList';
-import ItemDetails,{Filed} from '../../itemDetails';
-import Error from '../../error';
-import RowBlock from '../../rowBlock';
+import ItemList from '../itemList';
+import ItemDetails,{Filed} from '../itemDetails';
+import Error from '../error';
+import RowBlock from '../rowBlock';
+import GetGotInfo from '../../services';
+
 
 export default class HousePage extends Component{
     state ={
         houseId: null,
         error: false
     }
+    getService = new GetGotInfo();
+
     onHouseClick = (id)=>{
         this.setState({houseId: id});
     }
@@ -17,7 +21,6 @@ export default class HousePage extends Component{
     }
     render(){
         const {error,houseId} = this.state;
-        const {getService} = this.props;
         if(error){
             return(
                 <Error/>
@@ -26,13 +29,13 @@ export default class HousePage extends Component{
         const itemList = (
             <ItemList 
                 onItemClick={this.onHouseClick} 
-                getServiceFunc={getService.getAllHouses}
+                getServiceFunc={this.getService.getAllHouses}
                 renderValues = {(item)=>`${item.name}`}
             />
         );
         const itemDetails = (
             <ItemDetails 
-                getServiceFunc={getService.getHouse}
+                getServiceFunc={this.getService.getHouse}
                 id={houseId}>
                     <Filed label='Region' filed='region'/>
                     <Filed label='Words' filed='words'/>

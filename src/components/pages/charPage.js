@@ -1,8 +1,10 @@
 import React,{Component} from 'react';
-import ItemList from '../../itemList';
-import ItemDetails,{Filed} from '../../itemDetails';
-import Error from '../../error';
-import RowBlock from '../../rowBlock';
+import ItemList from '../itemList';
+import ItemDetails,{Filed} from '../itemDetails';
+import Error from '../error';
+import RowBlock from '../rowBlock';
+import GetGotInfo from '../../services';
+
 
 
 export default class CharPage extends Component{
@@ -10,6 +12,8 @@ export default class CharPage extends Component{
         charId: null,
         error: false
     }
+    getService = new GetGotInfo();
+
     onCharClick = (id)=>{
         this.setState({charId: id});
     }
@@ -18,7 +22,6 @@ export default class CharPage extends Component{
     }
     render(){
         const {error,charId} = this.state;
-        const {getService} = this.props;
         if(error){
             return(
                 <Error/>
@@ -27,13 +30,13 @@ export default class CharPage extends Component{
         const itemList = (
             <ItemList 
                 onItemClick={this.onCharClick} 
-                getServiceFunc={getService.getAllCharacters}
+                getServiceFunc={this.getService.getAllCharacters}
                 renderValues = {(item)=>`${item.name}(${item.gender})`}
             />
         );
         const itemDetails = (
             <ItemDetails 
-                getServiceFunc={getService.getCharacter}
+                getServiceFunc={this.getService.getCharacter}
                 id={charId}>
                     <Filed label='Gender' filed='gender'/>
                     <Filed label='Born' filed='born'/>

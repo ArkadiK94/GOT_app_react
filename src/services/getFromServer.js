@@ -85,11 +85,11 @@ export default class GetGotInfo{
         return date = date.match(/\d\d\d\d/);
     }
     _changeBookData = (data)=>{
-        const {url,name,authors,country,released} = data;
+        const {url,name,numberOfPages,country,released} = data;
         return {
             id : this.excractId(url),
             name: this.isValid(name),
-            authors: this.isValid(authors),
+            numberOfPages: this.isValid(numberOfPages),
             country: this.isValid(country),
             released: this.getYear(this.isValid(released))
         }
