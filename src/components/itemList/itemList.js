@@ -1,54 +1,54 @@
 import React, {Component} from 'react';
 import {ListGroupItem} from 'reactstrap';
 import styled from 'styled-components';
-import GetGotInfo from '../../services';
 import Error from '../error';
 import Loading from '../loading';
+
 
 const ItemListClazz = styled.div `
     cursor: pointer;
     padding-bottom: 30px;
 `
 
-export default class ItemList extends Component {
-    getCharArray = new GetGotInfo();
-    
+export default class ItemList extends Component {    
     state = {
-        arrayNamesNow: null,
+        arrayValuesNow: null,
         error: false,
         loading: false
     }
-
-    getCharsName = ()=>{
-        this.getCharArray.getAllCharacters()
+    setArrayInfo = (arrayValues)=>{
+        this.setState(()=>{
+            return{
+                arrayValuesNow: arrayValues,
+                loading: false
+            }
+        });
+    }
+    getItemValue = (getServiceFunc)=>{
+        this.setState({loading:true});
+        getServiceFunc()
             .then(res=>{
-                this.setState(()=>{
-                    const {onCharClick} = this.props;
-                    const arrayNames = res.map((char)=>{
-                        const {id} = char;
-                        return (
-                            <ListGroupItem 
-                                key={id} 
-                                onClick={()=>onCharClick(id)}>
-                                    {char.name}
-                            </ListGroupItem>
-                        );
-                    });
-                    return{
-                        arrayNamesNow: arrayNames,
-                        loading: false
-                    }
-                });
+                const {onItemClick,renderValues} = this.props;
+                const arrayValues = res.map((item)=>{
+                    const {id} = item;
+                    return (
+                        <ListGroupItem 
+                            key={id} 
+                            onClick={()=>onItemClick(id)}>
+                                {renderValues(item)}
+                        </ListGroupItem>
+                    );
+                }); 
+                this.setArrayInfo(arrayValues);
             })
             .catch(()=>{
                 this.setState({error:true})
             });
-        this.setState({loading:true})
-        
     }
 
     componentDidMount(){
-        this.getCharsName();
+        const getServiceFunc = (this.props.getServiceFunc);
+        this.getItemValue(getServiceFunc);
     }
     componentDidCatch(){
         this.setState({
@@ -70,8 +70,9 @@ export default class ItemList extends Component {
         }
         return (
             <ItemListClazz>
-                {this.state.arrayNamesNow}
+                {this.state.arrayValuesNow}
             </ItemListClazz>
         );
     }
 }
+

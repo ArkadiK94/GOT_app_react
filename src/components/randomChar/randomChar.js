@@ -28,22 +28,23 @@ export default class RandomChar extends Component {
     }
 
     getChar = new GetGotInfo();
-
+    setNewChar = (newChar)=>{
+        this.setState({
+            char: newChar,
+            loading: false
+        });
+    }
+    setError = ()=>{
+        this.setState({
+            error: true,
+            loading: false
+        });
+    }
     getRendomChar = ()=>{
         const newId = Math.floor(Math.random() *500 +25);
         this.getChar.getCharacter(newId)
-            .then(newChar=>{
-                this.setState({
-                    char: newChar,
-                    loading: false
-                });
-            })
-            .catch(() => {
-                this.setState({
-                    error: true,
-                    loading: false
-                });
-            });
+            .then(newChar=>this.setNewChar(newChar))
+            .catch(() => this.setError);
     }
     componentDidMount(){
         this.getRendomChar();
@@ -59,7 +60,7 @@ export default class RandomChar extends Component {
     }
 
     componentDidCatch(){
-        console.log("reandomChar");
+        this.setError();
     }
 
     render() {

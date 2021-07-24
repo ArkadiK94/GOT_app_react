@@ -3,13 +3,18 @@ import {Col, Row, Container, Button} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
 import Error from '../error';
-import CharPage from '../CharPage';
+import CharPage from '../pages/charPage';
+import GetGotInfo from '../../services';
+import BookPage from '../pages/bookPage';
+import HousePage from '../pages/housePage';
+
 
 export default class App extends Component{
     state = {
         show: true,
         error: false
     }
+    getService = new GetGotInfo();
     onToggle = ()=>{
         const {show} = this.state;
         this.setState({show:!show});
@@ -41,7 +46,9 @@ export default class App extends Component{
                             </Button>
                         </Col>
                     </Row>
-                    <CharPage/>
+                    <CharPage getService={this.getService}/>
+                    <HousePage getService={this.getService}/>
+                    <BookPage getService={this.getService}/>
                 </Container>
             </>
         );
