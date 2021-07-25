@@ -4,7 +4,7 @@ import Header from '../header';
 import RandomChar from '../randomChar';
 import Error from '../error';
 import {CharPage,BookPage,HousePage,BookItems} from '../pages';
-import {BrowserRouter as Router, Route} from 'react-router-dom'; 
+import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom'; 
 import styled from 'styled-components';
 import bgImg from './img/got.jpeg';
 
@@ -27,6 +27,7 @@ export default class App extends Component{
     componentDidCatch(){
         this.setState({error:true});
     }
+    
     render(){
         const {error,show} = this.state;
         if(error){
@@ -37,32 +38,65 @@ export default class App extends Component{
         const showNow = show ? <RandomChar/>: "";
         return (
             <Router>
-                <AppClazz> 
-                    <Container>
-                        <Header />
-                    </Container>
-                    <Container>
-                        <Row>
-                            <Col lg={{size: 5, offset: 0}}>
-                                {showNow}
-                                <Button 
-                                    color="primary mb-5"
-                                    onClick={this.onToggle}>
-                                        Toggle Random
-                                </Button>
-                            </Col>
-                        </Row>
-                        <Route path='/' exact component={MainPage}/>
-                        <Route path='/characters' exact component={CharPage}/>
-                        <Route path='/houses' exact component={HousePage}/>
-                        <Route path='/books' exact component={BookPage}/>
-                        <Route path='/books/:id' component={
+                <AppClazz>
+                    <Switch>
+                        <Route path='/' exact render={()=>{
+                            return(
+                                <AppHeaderPromo 
+                                    showNow={showNow} 
+                                    onToggle={this.onToggle} 
+                                    component={<MainPage/>}/>
+                            )
+                        }}/>
+                        <Route path='/characters/' exact render={()=>{
+                            return(
+                                <AppHeaderPromo 
+                                    showNow={showNow} 
+                                    onToggle={this.onToggle} 
+                                    component={<CharPage/>}/>
+                            )
+                        }}/>
+                        <Route path='/houses/' exact render={()=>{
+                            return(
+                                <AppHeaderPromo 
+                                    showNow={showNow} 
+                                    onToggle={this.onToggle} 
+                                    component={<HousePage/>}/>
+                            )
+                        }}/>
+                        <Route path='/books/' exact render={()=>{
+                            return(
+                                <AppHeaderPromo 
+                                    showNow={showNow} 
+                                    onToggle={this.onToggle} 
+                                    component={<BookPage/>}/>
+                            )
+                        }}/>
+                        <Route path='/books/:id' exact render={
                             ({match})=>{
                                 const {id} = match.params;
-                                return <BookItems id={id}/>
+                                console.log(match);
+                                if(id < 11 && id >=1){
+                                    return(
+                                        <AppHeaderPromo 
+                                            showNow={showNow} 
+                                            onToggle={this.onToggle} 
+                                            component={<BookItems id={id}/>}/>
+                                    )
+                                }
+                                return(
+                                    <ErrorPage404/>
+                                )
+                                
                             }
                         }/>
-                    </Container>
+                        <Route render={()=>{
+                            return(
+                                <ErrorPage404/>
+                            )
+                        }}/>
+                    </Switch>
+                    
                 </AppClazz>
             </Router>
         );
@@ -85,3 +119,39 @@ const MainPage = ()=>{
     )
 }
 
+const ErrorPage404 = ()=>{
+    return(
+        <div className="d-flex flex-column align-items-center mt-5">
+            <h1 className="text-light">404 Page Not Found</h1>
+            <Button color="info">
+                <Link to="/">
+                    go to main page
+                </Link>
+            </Button>
+        </div>
+    )
+}
+class AppHeaderPromo extends Component{
+    render(){
+        return(
+            <>
+                <Container>
+                    <Header />
+                </Container>
+                <Container>
+                    <Row>
+                        <Col lg={{size: 5, offset: 0}}>
+                            {this.props.showNow}
+                            <Button 
+                                color="primary mb-5"
+                                onClick={this.props.onToggle}>
+                                    Toggle Random
+                            </Button>
+                        </Col>
+                    </Row>
+                    {this.props.component}
+                </Container>
+            </>
+        )
+    }
+}
