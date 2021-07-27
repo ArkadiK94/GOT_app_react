@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState,useEffect} from 'react';
 import {ListGroup,ListGroupItem} from 'reactstrap';
 import styled from 'styled-components';
 import Error from '../error';
@@ -40,77 +40,53 @@ const Filed =({item,label,filed})=>{
     )
 }
 
-export default class ItemDetails extends Component {
-    state = {
-        item: null,
-        error: false,
-        loading: false
+function ItemDetails ({id,getServiceFunc,children}) {
+    const [item,setItem] = useState(null);
+    const [error,setError] = useState(false);
+    const [loading,updateLoading]= useState(false);
+    const [prevId,updateId]= useState(0);
+
+    const setItemWithLoad = (res)=>{
+        setItem(res);
+        updateLoading(false);
     }
-    setError = (error)=>{
-        this.setState({error});
-    }
-    setItem = (res)=>{
-        this.setState(()=>{
-            return{
-                item: res,
-                loading: false
-            }
-        })
-    }
-    updateChoosenItem = (getServiceFunc)=> {
-        const {id} = this.props;
+    const updateChoosenItem = (getServiceFunction)=> {
         if(!id){
             return
         }
-        this.setState({loading:true});
+        updateLoading(true);
+        updateId(id);
+        getServiceFunction(id)
+            .then(res=>setItemWithLoad(res))
+            .catch(()=>setError(true));
 
-        getServiceFunc(id)
-            .then(res=>this.setItem(res))
-            .catch(()=>this.setState({error:true}));
-
     }
-    componentDidMount(){
-        const getServiceFunc = (this.props.getServiceFunc);
-        this.updateChoosenItem(getServiceFunc);
-    }
-    componentDidUpdate(prevProps){
-        if(prevProps.id !== this.props.id){
-            const getServiceFunc = (this.props.getServiceFunc);
-            this.updateChoosenItem(getServiceFunc);
+    useEffect(()=>{
+        if(id !== prevId){
+            updateChoosenItem(getServiceFunc);
         }
-    }
-    componentDidCatch(){
-        this.setState({
-            error:true
-        })
-    }
-    render() {
-        const {item,error,loading} = this.state;
-        if(error){
-            return(
-                <Error/>
-            )
-        }
-        if(!item){
-            return(
-                <MainBlock>
-                    <SelectError>Pls choose an item from the list</SelectError>
-                </MainBlock>
-            )
-        }
-        if(loading){
-            return(
-                <Loading/>
-            )
-        }
-        const {name} = item;
-        
+    });
+    if(error){
+        return(
+            <Error/>
+        )
+    }else if(!item){
+        return(
+            <MainBlock>
+                <SelectError>Pls choose an item from the list</SelectError>
+            </MainBlock>
+        )
+    }else if(loading){
+        return(
+            <Loading/>
+        )
+    } else {
         return (
             <ItemDetailsClazz className="rounded">
-                <h4>{name}</h4>
+                <h4>{item.name}</h4>
                 <ListGroup flush>
                     {
-                        React.Children.map(this.props.children,(child)=>{
+                        React.Children.map(children,(child)=>{
                             return React.cloneElement(child,{item})
                         })
                     }
@@ -118,7 +94,11 @@ export default class ItemDetails extends Component {
             </ItemDetailsClazz>
         );
     }
+    
+    
+    
 }
 
+export default ItemDetails;
 export {Filed};                
                     

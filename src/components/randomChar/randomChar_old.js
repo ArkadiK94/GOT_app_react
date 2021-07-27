@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {Component} from 'react';
 import {ListGroup,ListGroupItem} from 'reactstrap';
 import styled from 'styled-components';
 import GetGotInfo from '../../services';
@@ -19,47 +19,65 @@ const Term = styled.span`
     font-weight: bold;
 `;
 
-function RandomChar () {
-    const [char,setChar] = useState({});
-    const [loading,updateLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    const getChar = new GetGotInfo();
-
-    const setNewChar = (newChar)=>{
-        setChar(newChar);
-        updateLoading(false);
+export default class RandomChar extends Component {
+    state = {
+        char: {},
+        loading : true,
+        error : false,
+        interval : null
     }
-    const setErrors = ()=>{
-        setError(true);
-        updateLoading(false);
+
+    getChar = new GetGotInfo();
+    setNewChar = (newChar)=>{
+        this.setState({
+            char: newChar,
+            loading: false
+        });
     }
-    const getRendomChar = ()=>{
+    setError = ()=>{
+        this.setState({
+            error: true,
+            loading: false
+        });
+    }
+    getRendomChar = ()=>{
         const newId = Math.floor(Math.random() *500 +25);
-        getChar.getCharacter(newId)
-            .then(newChar=>setNewChar(newChar))
-            .catch(() => setErrors());
+        this.getChar.getCharacter(newId)
+            .then(newChar=>this.setNewChar(newChar))
+            .catch(() => this.setError);
     }
-    useEffect (()=>{
-        getRendomChar();
-        const intervalOn = setInterval(getRendomChar,1500);
-        return ()=>clearInterval(intervalOn);
-    },[]);
+    componentDidMount(){
+        this.getRendomChar();
+        const intervalOn = setInterval(this.getRendomChar,1500);
+        this.setState(()=>{
+            return {
+                interval : intervalOn
+            }
+        })
+    }
+    componentWillUnmount(){
+        clearInterval(this.state.interval);
+    }
 
-    
-    const load = loading ? <Loading/>: '';
-    const err = error? <Error/>: '';
-    const view = (!(loading || error))? <View char={char}/>: "";
-    return (
-        <>
-            <div className="rounded">
-                {load}
-                {err}
-                {view}
-            </div>
-        </>
-    );
-    
+    componentDidCatch(){
+        this.setError();
+    }
+
+    render() {
+        const {char,loading,error} = this.state;
+        const load = loading ? <Loading/>: '';
+        const err = error? <Error/>: '';
+        const view = (!(loading || error))? <View char={char}/>: "";
+        return (
+            <>
+                <div className="rounded">
+                    {load}
+                    {err}
+                    {view}
+                </div>
+            </>
+        );
+    }
 }
 
 const View = ({char})=>{
@@ -88,5 +106,3 @@ const View = ({char})=>{
         </RandomBlock>
     )
 }
-
-export default RandomChar;

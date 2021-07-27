@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState,useEffect} from 'react';
 import {ListGroupItem} from 'reactstrap';
 import styled from 'styled-components';
 import Error from '../error';
@@ -10,27 +10,33 @@ const ItemListClazz = styled.div `
     padding-bottom: 30px;
 `
 
-export default class ItemList extends Component {    
-    state = {
-        arrayValuesNow: null,
-        error: false,
-        loading: false
+function ItemList ({onItemClick,renderValues,getServiceFunc}){  
+    const [arrayValuesNow,setArrayValuesNow] = useState(null);
+    const [error,setError] = useState(false);
+    const [loading,updateLoading] = useState(false);
+    
+    const setArrayInfo = (arrayValue)=>{
+        if(arrayValue){
+            updateLoading(false);
+            setArrayValuesNow(arrayValue)
+        } else{
+            setError(true);
+        }
     }
-    setArrayInfo = (arrayValues)=>{
-        this.setState(()=>{
-            return{
-                arrayValuesNow: arrayValues,
-                loading: false
-            }
-        });
-    }
-    getItemValue = (getServiceFunc)=>{
-        this.setState({loading:true});
-        getServiceFunc()
+    useEffect(()=>{
+        if(getServiceFunc){
+            getItemValue(getServiceFunc);
+        } else{
+            setError(true);
+        }
+    },[]);
+    const getItemValue = (getServiceFunction)=>{
+        updateLoading(true);
+        getServiceFunction()
             .then(res=>{
-                const {onItemClick,renderValues} = this.props;
                 const arrayValues = res.map((item)=>{
                     const {id} = item;
+                    console.log()
                     return (
                         <ListGroupItem 
                             key={id} 
@@ -39,40 +45,29 @@ export default class ItemList extends Component {
                         </ListGroupItem>
                     );
                 }); 
-                this.setArrayInfo(arrayValues);
+                setArrayInfo(arrayValues);
             })
             .catch(()=>{
-                this.setState({error:true})
+                setError(true);
             });
     }
 
-    componentDidMount(){
-        const getServiceFunc = (this.props.getServiceFunc);
-        this.getItemValue(getServiceFunc);
-    }
-    componentDidCatch(){
-        this.setState({
-            error:true
-        })
-    }
-    render() {
-        const {error,loading} = this.state;
-        
-        if(error){
-            return(
-                <Error/>
-            )
-        }
-        if(loading){
-            return(
-                <Loading/>
-            )
-        }
+    
+    if(error){
+        return(
+            <Error/>
+        )
+    } else if(loading){
+        return(
+            <Loading/>
+        )
+    } else {
         return (
             <ItemListClazz>
-                {this.state.arrayValuesNow}
+                {arrayValuesNow}
             </ItemListClazz>
-        );
+        )
     }
 }
 
+export default ItemList;

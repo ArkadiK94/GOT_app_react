@@ -75,7 +75,6 @@ export default class App extends Component{
                         <Route path='/books/:id' exact render={
                             ({match})=>{
                                 const {id} = match.params;
-                                console.log(match);
                                 if(id < 11 && id >=1){
                                     return(
                                         <AppHeaderPromo 
