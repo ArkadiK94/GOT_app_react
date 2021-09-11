@@ -5,9 +5,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 #### Technologies that we used:
 1. react
-2. styled-components
-3. reactstrap and bootstrap
-4. react-router-dom
+2. anapioficeandfire.com - an API that was used in the app
+3. styled-components
+4. reactstrap and bootstrap
+5. react-router-dom
 
 #### Important features from React and other used libraries:
 1. react hooks
